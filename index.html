@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>TODO LIST</h1>
+    <div id="form">
+        <input type="text" id="input" placeholder="Add To Do..">
+        <input id="btntambah" type="button" value="add to list">
+
+    </div>
+    <div id="content">
+        <ul id="list"></ul>
+    </div>
+    <script>
+        const input = document.getElementById("input");
+        const button = document.getElementById("btntambah");
+        const list = document.getElementById("list");
+
+        button.addEventListener("click", function(){
+            const teksv = input.value;
+            if (teksv !== "") {
+                const li = document.createElement("li");
+                const spanText = document.createElement("span");
+                spanText.textContent = teksv;
+                li.textContent = teksv;
+                list.appendChild(spanText);
+                const btnEdit = document.createElement("button");
+                const btnDelete = document.createElement("button");
+                list.appendChild(li);
+                input.value = "";
+            } else {
+                alert("Tdak Boleh Kosong")
+            }
+
+        });
+    </script>
+</body>
+</html>
