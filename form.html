@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM FORM</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>COMMENT FORM</h1>
+    <div id="form">
+        <form name="commentform" action="">
+            <div class="form-group">
+                <label for="comment">Comment:</label>
+                <input type="text" name="comment" id="comment" placeholder="Write your comment...">
+            </div>
+            <div class="form-group">
+                <label for="from">From:</label>
+                <input type="text" name="from" id="from" placeholder="Your name...">
+            </div>
+            <input type="submit" value="Submit Comment" class="submit-btn">
+        </form>
+    </div>
+    
+    <div id="content">
+        <h2>Comments:</h2>
+        <div id="comment-list"></div>
+    </div>
+
+    <script>
+        document.querySelector("form[name='commentform']").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            const commentList = document.getElementById("comment-list");
+            const comment = document.getElementById("comment").value.trim();
+            const from = document.getElementById("from").value.trim();
+        
+            if (comment === "" || from === "") {
+                alert("Please fill in both comment and name fields!");
+                return;
+            }
+       
+            const commentItem = document.createElement("div");
+            commentItem.classList.add("comment-item");
+
+            const commentText = document.createElement("p");
+            commentText.classList.add("comment-text");
+            commentText.textContent = comment;
+            
+            const commentAuthor = document.createElement("p");
+            commentAuthor.classList.add("comment-author");
+            commentAuthor.textContent = `- ${from}`;
+            
+            const commentDate = document.createElement("small");
+            commentDate.classList.add("comment-date");
+            commentDate.textContent = new Date().toLocaleString();
+       
+            const deleteBtn = document.createElement("button");
+            deleteBtn.classList.add("btnDelete");
+            deleteBtn.textContent = "Delete";
+            deleteBtn.addEventListener("click", function() {
+                if (confirm("Are you sure you want to delete this comment?")) {
+                    commentList.removeChild(commentItem);
+                }
+            });
+
+            commentItem.appendChild(commentText);
+            commentItem.appendChild(commentAuthor);
+            commentItem.appendChild(commentDate);
+            commentItem.appendChild(deleteBtn);
+        
+            commentList.insertBefore(commentItem, commentList.firstChild);
+            
+            document.getElementById("comment").value = "";
+            document.getElementById("from").value = "";
+        });
+    </script>
+</body>
+</html>

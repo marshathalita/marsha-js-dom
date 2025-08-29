@@ -7,37 +7,148 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>TODO LIST</h1>
+    <h1>TO DO LIST</h1>
     <div id="form">
         <input type="text" id="input" placeholder="Add To Do..">
         <input id="btntambah" type="button" value="add to list">
+        </div>
 
-    </div>
     <div id="content">
         <ul id="list"></ul>
     </div>
+
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <h3> Konfirmasi Hapus </h3>
+            <p> Konfirmasi untuk menghapus pesan </p>
+            <div class="modal-buttons">
+                <button id="confirmDelete" class="modal-btn confirm-btn"> Konfirmasi </button>
+                <button id="cancelDelete" class="modal-btn cancel-btn"> Kembali </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const input = document.getElementById("input");
         const button = document.getElementById("btntambah");
         const list = document.getElementById("list");
+        const modal = document.getElementById("confirmModal")
+        const confirmDeleteBtn = document.getElementById("confirmDelete")
+        const cancelDeleteBtn = document.getElementById("cancelDelete")
+
+        let itemEdit = null;
+        let spanEdit = null;
+        let itemToDelete = null;
 
         button.addEventListener("click", function(){
-            const teksv = input.value;
-            if (teksv !== "") {
-                const li = document.createElement("li");
-                const spanText = document.createElement("span");
-                spanText.textContent = teksv;
-                li.textContent = teksv;
-                list.appendChild(spanText);
-                const btnEdit = document.createElement("button");
-                const btnDelete = document.createElement("button");
-                list.appendChild(li);
+            const teksv = input.value.trim();
+
+                if (teksv === "") {
+                    alert("Masukkan teks")
+                    return;
+                }
+
+                if (itemEdit && spanEdit) {
+                    spanEdit.textContent = teksv;
+                    resetEditMode();
+
+                } else {
+                    addNewTask(teksv);
+                }
+                
                 input.value = "";
-            } else {
-                alert("Tdak Boleh Kosong")
+            });
+
+            input.addEventListener("keypress", function(e) {
+                if (e.key === "Enter") {
+                    button.click();
+                }
+            })
+
+            function addNewTask(taskText) {
+                const li = document.createElement("li");
+                const taskContent = document.createElement("div");
+                taskContent.classList.add("task-content");
+                
+                const spanText = document.createElement("span");
+                spanText.textContent = taskText;
+                taskContent.appendChild(spanText);
+                const buttonGroup = document.createElement("div");
+                buttonGroup.classList.add("button-group");
+                const btnEdit = document.createElement("button");
+                btnEdit.classList.add("btnEdit");
+                btnEdit.textContent = "Edit";
+                btnEdit.addEventListener("click", function() {
+                    editTask(li, spanText);
+                });
+                
+                const btnDelete = document.createElement("button");
+                btnDelete.classList.add("btnDelete");
+                btnDelete.textContent = "Delete";
+                btnDelete.addEventListener("click", function() {
+                    showDeleteConfirmation(li);
+                });
+                
+                buttonGroup.appendChild(btnEdit);
+                buttonGroup.appendChild(btnDelete);
+                
+                li.appendChild(taskContent);
+                li.appendChild(buttonGroup);
+                list.appendChild(li);
+            }
+            function editTask(li, spanText) {
+            input.value = spanText.textContent;
+            button.value = "Update";
+            button.classList.add("update-mode");
+            itemEdit = li;
+            spanEdit = spanText;
+            input.focus();
             }
 
-        });
+            function resetEditMode() {
+                itemEdit = null;
+                spanEdit = null;
+                button.value = "Add to List";
+                button.classList.remove("update-mode");
+            }
+
+            function showDeleteConfirmation(li) {
+                itemToDelete = li;
+                modal.style.display = "block";
+            }
+            
+            confirmDeleteBtn.addEventListener("click", function() {
+                if (itemToDelete) {
+                    list.removeChild(itemToDelete);
+                    itemToDelete = null;
+                }
+                modal.style.display = "none";
+            });
+
+            cancelDeleteBtn.addEventListener("click", function() {
+                itemToDelete = null;
+                modal.style.display = "none";
+            });
+
+            window.addEventListener("click", function(event) {
+                if (event.target === modal) {
+                    itemToDelete = null;
+                    modal.style.display = "none";
+                }
+            });
+
+            document.addEventListener("keydown", function(e) {
+                if (e.key === "Escape") {
+                    if (modal.style.display === "block") {
+                        itemToDelete = null;
+                        modal.style.display = "none";
+                    } else if (itemEdit) {
+                        resetEditMode();
+                        input.value = "";
+                    }
+                }
+            });
+
     </script>
 </body>
 </html>
